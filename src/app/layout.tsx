@@ -22,6 +22,13 @@ export const metadata: Metadata = {
   description:
     "Premium unisex salon and beauty atelier in Puducherry with appointment booking, offers, gallery, and admin management.",
   metadataBase: new URL("https://transformerssalon.in"),
+  icons: {
+    icon: [
+      { url: "/brand/fox-mascot.webp", type: "image/webp" },
+    ],
+    apple: "/brand/fox-mascot.webp",
+    shortcut: "/brand/fox-mascot.webp",
+  },
 };
 
 export default function RootLayout({

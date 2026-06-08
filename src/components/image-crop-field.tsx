@@ -15,6 +15,14 @@ type ImageCropFieldProps = {
   required?: boolean;
 };
 
+const ASPECT_PRESETS = [
+  { label: "Portrait", ratio: 9 / 16, display: "9:16" },
+  { label: "Square", ratio: 1, display: "1:1" },
+  { label: "Landscape", ratio: 4 / 3, display: "4:3" },
+  { label: "Wide", ratio: 16 / 9, display: "16:9" },
+  { label: "Banner", ratio: 5 / 3, display: "5:3" },
+];
+
 function loadImage(url: string) {
   return new Promise<HTMLImageElement>((resolve, reject) => {
     const image = new window.Image();
@@ -72,6 +80,7 @@ export function ImageCropField({
   helperText = "Choose an image, crop the visible area, then save.",
   required,
 }: ImageCropFieldProps) {
+  const [activeAspect, setActiveAspect] = useState(aspect);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const previewUrlRef = useRef<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -172,7 +181,7 @@ export function ImageCropField({
                   image={imageSrc}
                   crop={crop}
                   zoom={zoom}
-                  aspect={aspect}
+                  aspect={activeAspect}
                   onCropChange={setCrop}
                   onZoomChange={setZoom}
                   onCropComplete={(_, pixels) => setCroppedAreaPixels(pixels)}
@@ -195,9 +204,41 @@ export function ImageCropField({
               </div>
             </div>
             <div className="flex flex-col justify-between gap-4 rounded-xl border bg-card/60 p-4">
-              <div className="space-y-3">
+              <div className="space-y-4">
                 <p className="text-sm font-semibold">Crop preview</p>
                 <p className="text-sm text-muted-foreground">Position the image inside the frame, then save the cropped version back into the form.</p>
+
+                {/* Aspect ratio presets */}
+                <div className="space-y-2">
+                  <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground">Aspect ratio</p>
+                  <div className="grid grid-cols-3 gap-1.5">
+                    {ASPECT_PRESETS.map((preset) => (
+                      <button
+                        key={preset.label}
+                        type="button"
+                        onClick={() => { setActiveAspect(preset.ratio); setCrop({ x: 0, y: 0 }); setZoom(1); }}
+                        className={[
+                          "flex flex-col items-center gap-0.5 rounded-lg border px-1 py-2 text-center text-[10px] font-semibold transition-all duration-150 hover:border-primary/60 hover:bg-primary/10",
+                          Math.abs(activeAspect - preset.ratio) < 0.01
+                            ? "border-primary bg-primary/15 text-primary shadow-sm"
+                            : "border-border bg-background/60 text-muted-foreground",
+                        ].join(" ")}
+                      >
+                        {/* Mini aspect ratio visual */}
+                        <span
+                          className="mb-0.5 block rounded-sm border-2 border-current opacity-70"
+                          style={{
+                            width: preset.ratio >= 1 ? 20 : Math.round(20 * preset.ratio),
+                            height: preset.ratio <= 1 ? 14 : Math.round(14 / preset.ratio),
+                          }}
+                        />
+                        {preset.display}
+                        <span className="block text-[9px] font-normal opacity-70">{preset.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
                 <div className="rounded-lg border bg-background p-3 text-xs text-muted-foreground">
                   The file will upload as {selectedFileName ?? "the selected image"}.
                 </div>
