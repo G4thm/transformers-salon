@@ -15,7 +15,7 @@ export const brand = {
 
 export const brandAssets = {
   logoWide: "/brand/brand-logo-wide.jpeg",
-  mascot: "/brand/fox-mascot.png",
+  mascot: "/brand/fox-mascot.webp",
   foxLogo: "/brand/fox-logo.png",
   grandOpening: "/brand/grand-opening.jpeg",
   contactCard: "/brand/contact-card.jpeg",

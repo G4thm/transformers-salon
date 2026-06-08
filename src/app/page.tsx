@@ -50,7 +50,7 @@ export default async function Home() {
       </MotionSection>
       <MotionSection className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:px-8">
         <div className="relative min-h-105 overflow-hidden rounded-lg border">
-          <Image src={content.assets.grandOpening} alt="Transformers Salon grand opening creative" fill sizes="(min-width: 1024px) 50vw, 100vw" className="object-cover" />
+          <Image src={content.assets.grandOpening} alt="Transformers Salon grand opening creative" fill sizes="(min-width: 1024px) 50vw, 100vw" className="object-cover" loading="lazy" />
         </div>
         <div className="flex flex-col justify-center gap-5">
           <Badge>Offers</Badge>

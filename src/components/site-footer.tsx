@@ -15,8 +15,8 @@ export async function SiteFooter() {
           <p className="max-w-md text-sm leading-6 text-muted-foreground">{brand.promise}</p>
         </div>
         <div className="flex flex-col gap-3 text-sm">
-          <a className="flex items-center gap-3 rounded-xl border bg-background/60 p-3 hover:text-primary" href={`tel:${contact.phonePrimary}`}>
-            <span className="flex size-9 items-center justify-center rounded-full bg-sky-500/15 text-sky-600">
+          <a className="group flex items-center gap-3 rounded-xl border bg-background/60 p-3 transition-all duration-300 hover:-translate-y-1 hover:border-sky-500/60 hover:bg-sky-500/10 hover:shadow-lg hover:shadow-sky-500/20 active:scale-95" href={`tel:${contact.phonePrimary}`}>
+            <span className="flex size-9 items-center justify-center rounded-full bg-sky-500/15 text-sky-600 transition-all duration-300 group-hover:bg-sky-500 group-hover:text-white">
               <PhoneCall className="size-4" />
             </span>
             <span>
@@ -24,8 +24,8 @@ export async function SiteFooter() {
               <span className="block font-semibold">{contact.phonePrimary}</span>
             </span>
           </a>
-          <a className="flex items-center gap-3 rounded-xl border bg-background/60 p-3 hover:text-primary" href={`mailto:${contact.email}`}>
-            <span className="flex size-9 items-center justify-center rounded-full bg-cyan-500/15 text-cyan-600">
+          <a className="group flex items-center gap-3 rounded-xl border bg-background/60 p-3 transition-all duration-300 hover:-translate-y-1 hover:border-cyan-500/60 hover:bg-cyan-500/10 hover:shadow-lg hover:shadow-cyan-500/20 active:scale-95" href={`mailto:${contact.email}`}>
+            <span className="flex size-9 items-center justify-center rounded-full bg-cyan-500/15 text-cyan-600 transition-all duration-300 group-hover:bg-cyan-500 group-hover:text-white">
               <Mail className="size-4" />
             </span>
             <span>
@@ -33,8 +33,8 @@ export async function SiteFooter() {
               <span className="block font-semibold">{contact.email}</span>
             </span>
           </a>
-          <a className="flex items-center gap-3 rounded-xl border bg-background/60 p-3 hover:text-emerald-600" href={`https://wa.me/91${contact.whatsapp}`} target="_blank" rel="noreferrer">
-            <span className="flex size-9 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600">
+          <a className="group flex items-center gap-3 rounded-xl border bg-background/60 p-3 transition-all duration-300 hover:-translate-y-1 hover:border-emerald-500/60 hover:bg-emerald-500/10 hover:shadow-lg hover:shadow-emerald-500/20 active:scale-95" href={`https://wa.me/91${contact.whatsapp}`} target="_blank" rel="noreferrer">
+            <span className="flex size-9 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600 transition-all duration-300 group-hover:bg-emerald-500 group-hover:text-white">
               <MessageCircleMore className="size-4" />
             </span>
             <span>
@@ -44,14 +44,14 @@ export async function SiteFooter() {
           </a>
         </div>
         <div className="flex flex-col gap-3 text-sm text-muted-foreground">
-          <a className="flex items-start gap-3 rounded-xl border bg-background/60 p-3 hover:text-amber-600" href={mapHref} target="_blank" rel="noreferrer">
-            <span className="mt-0.5 flex size-9 items-center justify-center rounded-full bg-amber-500/15 text-amber-600">
+          <a className="group flex items-start gap-3 rounded-xl border bg-background/60 p-3 transition-all duration-300 hover:-translate-y-1 hover:border-amber-500/60 hover:bg-amber-500/10 hover:shadow-lg hover:shadow-amber-500/20 hover:text-amber-600 active:scale-95" href={mapHref} target="_blank" rel="noreferrer">
+            <span className="mt-0.5 flex size-9 items-center justify-center rounded-full bg-amber-500/15 text-amber-600 transition-all duration-300 group-hover:bg-amber-500 group-hover:text-white">
               <MapPinned className="size-4" />
             </span>
             <span>{contact.address}</span>
           </a>
-          <a className="flex items-center gap-3 rounded-xl border bg-background/60 p-3 hover:text-pink-600" href={`https://instagram.com/${contact.instagram}`} target="_blank" rel="noreferrer">
-            <span className="flex size-9 items-center justify-center rounded-full bg-pink-500/15 text-pink-600">
+          <a className="group flex items-center gap-3 rounded-xl border bg-background/60 p-3 transition-all duration-300 hover:-translate-y-1 hover:border-pink-500/60 hover:bg-pink-500/10 hover:shadow-lg hover:shadow-pink-500/20 hover:text-pink-600 active:scale-95" href={`https://instagram.com/${contact.instagram}`} target="_blank" rel="noreferrer">
+            <span className="flex size-9 items-center justify-center rounded-full bg-pink-500/15 text-pink-600 transition-all duration-300 group-hover:bg-pink-500 group-hover:text-white">
               <AtSign className="size-4" />
             </span>
             <span>
@@ -63,7 +63,7 @@ export async function SiteFooter() {
             <BadgeCheck className="size-4 text-primary" />
             Verified original contact channels
           </div>
-          <Link className="font-semibold text-foreground hover:text-primary" href="/login">
+          <Link className="font-semibold text-foreground transition-colors hover:text-primary" href="/login">
             Admin login
           </Link>
         </div>

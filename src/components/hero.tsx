@@ -18,7 +18,7 @@ export async function Hero() {
             {brand.tagline}
           </div>
           <div className="flex flex-col gap-5">
-            <h1 className="brand-wordmark max-w-4xl text-5xl leading-[0.95] sm:text-7xl lg:text-8xl">
+            <h1 className="brand-wordmark max-w-4xl text-4xl leading-[0.95] sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl">
               Transformers Unisex Salon
             </h1>
             <p className="max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl">

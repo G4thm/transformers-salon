@@ -17,7 +17,7 @@ export function ServiceFlipCards({ category, services }: { category: "men" | "wo
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ delay: index * 0.04 }}
+          transition={{ delay: Math.min(index * 0.03, 0.15) }}
           className="group perspective-1000 h-64"
         >
           <div className="preserve-3d relative size-full rounded-lg transition duration-500 group-hover:rotate-y-180">

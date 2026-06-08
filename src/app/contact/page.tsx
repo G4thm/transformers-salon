@@ -19,12 +19,12 @@ export default async function ContactPage() {
       <section className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:px-8">
         <div className="flex flex-col gap-6">
           <Badge>Contact</Badge>
-          <h1 className="text-5xl font-black">Visit the fox atelier in Puducherry.</h1>
+          <h1 className="text-4xl font-black sm:text-5xl">Visit the fox atelier in Puducherry.</h1>
           <Card className="glass">
             <CardContent className="grid gap-4 p-6">
               <div className="grid gap-3 sm:grid-cols-2">
-                <a className="flex items-center gap-3 rounded-xl border bg-background/60 p-4 transition hover:-translate-y-0.5 hover:border-primary/60 hover:text-primary" href={phoneHref}>
-                  <span className="flex size-11 items-center justify-center rounded-full bg-sky-500/15 text-sky-600">
+                <a className="group flex items-center gap-3 rounded-xl border bg-background/60 p-4 transition-all duration-300 hover:-translate-y-1 hover:border-sky-500/60 hover:bg-sky-500/10 hover:shadow-lg hover:shadow-sky-500/20 hover:text-primary active:scale-95" href={phoneHref}>
+                  <span className="flex size-11 items-center justify-center rounded-full bg-sky-500/15 text-sky-600 transition-all duration-300 group-hover:bg-sky-500 group-hover:text-white">
                     <PhoneCall className="size-5" />
                   </span>
                   <span>
@@ -32,8 +32,8 @@ export default async function ContactPage() {
                     <span className="block font-semibold">{contact.phonePrimary}</span>
                   </span>
                 </a>
-                <a className="flex items-center gap-3 rounded-xl border bg-background/60 p-4 transition hover:-translate-y-0.5 hover:border-emerald-500/60 hover:text-emerald-600" href={whatsappHref} target="_blank" rel="noreferrer">
-                  <span className="flex size-11 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600">
+                <a className="group flex items-center gap-3 rounded-xl border bg-background/60 p-4 transition-all duration-300 hover:-translate-y-1 hover:border-emerald-500/60 hover:bg-emerald-500/10 hover:shadow-lg hover:shadow-emerald-500/20 hover:text-emerald-600 active:scale-95" href={whatsappHref} target="_blank" rel="noreferrer">
+                  <span className="flex size-11 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600 transition-all duration-300 group-hover:bg-emerald-500 group-hover:text-white">
                     <MessageCircleMore className="size-5" />
                   </span>
                   <span>
@@ -41,8 +41,8 @@ export default async function ContactPage() {
                     <span className="block font-semibold">Chat now</span>
                   </span>
                 </a>
-                <a className="flex items-center gap-3 rounded-xl border bg-background/60 p-4 transition hover:-translate-y-0.5 hover:border-amber-500/60 hover:text-amber-600" href={mapHref} target="_blank" rel="noreferrer">
-                  <span className="flex size-11 items-center justify-center rounded-full bg-amber-500/15 text-amber-600">
+                <a className="group flex items-center gap-3 rounded-xl border bg-background/60 p-4 transition-all duration-300 hover:-translate-y-1 hover:border-amber-500/60 hover:bg-amber-500/10 hover:shadow-lg hover:shadow-amber-500/20 hover:text-amber-600 active:scale-95" href={mapHref} target="_blank" rel="noreferrer">
+                  <span className="flex size-11 items-center justify-center rounded-full bg-amber-500/15 text-amber-600 transition-all duration-300 group-hover:bg-amber-500 group-hover:text-white">
                     <MapPinned className="size-5" />
                   </span>
                   <span>
@@ -50,8 +50,8 @@ export default async function ContactPage() {
                     <span className="block font-semibold">Open in Google Maps</span>
                   </span>
                 </a>
-                <a className="flex items-center gap-3 rounded-xl border bg-background/60 p-4 transition hover:-translate-y-0.5 hover:border-pink-500/60 hover:text-pink-600" href={`https://instagram.com/${contact.instagram}`} target="_blank" rel="noreferrer">
-                  <span className="flex size-11 items-center justify-center rounded-full bg-pink-500/15 text-pink-600">
+                <a className="group flex items-center gap-3 rounded-xl border bg-background/60 p-4 transition-all duration-300 hover:-translate-y-1 hover:border-pink-500/60 hover:bg-pink-500/10 hover:shadow-lg hover:shadow-pink-500/20 hover:text-pink-600 active:scale-95" href={`https://instagram.com/${contact.instagram}`} target="_blank" rel="noreferrer">
+                  <span className="flex size-11 items-center justify-center rounded-full bg-pink-500/15 text-pink-600 transition-all duration-300 group-hover:bg-pink-500 group-hover:text-white">
                     <AtSign className="size-5" />
                   </span>
                   <span>
@@ -64,8 +64,10 @@ export default async function ContactPage() {
                 <BadgeCheck className="size-4 text-primary" />
                 Original verified salon account and public location details.
               </div>
-              <a className="flex gap-3 rounded-xl border bg-background/60 p-4 hover:text-primary" href={`mailto:${contact.email}`}>
-                <Mail className="mt-0.5 size-5 text-primary" />
+              <a className="group flex gap-3 rounded-xl border bg-background/60 p-4 transition-all duration-300 hover:-translate-y-1 hover:border-cyan-500/60 hover:bg-cyan-500/10 hover:shadow-lg hover:shadow-cyan-500/20 hover:text-primary active:scale-95" href={`mailto:${contact.email}`}>
+                <span className="mt-0.5 flex size-11 items-center justify-center rounded-full bg-cyan-500/15 text-cyan-600 transition-all duration-300 group-hover:bg-cyan-500 group-hover:text-white">
+                  <Mail className="size-5" />
+                </span>
                 <span>
                   <span className="block text-xs uppercase tracking-[0.18em] text-muted-foreground">Email</span>
                   <span className="block font-semibold">{contact.email}</span>
@@ -97,7 +99,7 @@ export default async function ContactPage() {
           </div>
         </div>
         <div className="relative min-h-130 overflow-hidden rounded-lg border">
-          <Image src={assets.contactCard} alt="Transformers Salon contact card" fill sizes="(min-width: 1024px) 50vw, 100vw" className="object-cover" />
+          <Image src={assets.contactCard} alt="Transformers Salon contact card" fill sizes="(min-width: 1024px) 50vw, 100vw" className="object-cover" loading="lazy" />
         </div>
       </section>
     </PageShell>

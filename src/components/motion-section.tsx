@@ -8,7 +8,7 @@ export function MotionSection({ children, className }: { children: React.ReactNo
       initial={{ opacity: 0, y: 28 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
       className={className}
     >
       {children}
