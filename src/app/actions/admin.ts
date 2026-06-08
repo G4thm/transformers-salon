@@ -2,6 +2,7 @@
 
 import { randomUUID } from "crypto";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 
@@ -27,6 +28,10 @@ async function requireAdmin() {
 }
 
 const enabled = (value: FormDataEntryValue | null) => value === "on";
+
+function redirectWithNotice(message: string) {
+  redirect(`/admin?notice=${encodeURIComponent(message)}`);
+}
 
 async function uploadFileToBucket(supabase: Awaited<ReturnType<typeof createClient>>, bucket: string, value: FormDataEntryValue | null) {
   if (!(value instanceof File) || value.size === 0) {
@@ -68,6 +73,7 @@ export async function upsertService(formData: FormData) {
   if (error) throw new Error(error.message);
   revalidatePath("/services");
   revalidatePath("/admin");
+  redirectWithNotice(data.id ? "Service updated." : "Service created.");
 }
 
 export async function deleteService(formData: FormData) {
@@ -77,6 +83,7 @@ export async function deleteService(formData: FormData) {
   if (error) throw new Error(error.message);
   revalidatePath("/services");
   revalidatePath("/admin");
+  redirectWithNotice("Service deleted.");
 }
 
 export async function upsertOffer(formData: FormData) {
@@ -102,6 +109,7 @@ export async function upsertOffer(formData: FormData) {
   if (error) throw new Error(error.message);
   revalidatePath("/offers");
   revalidatePath("/admin");
+  redirectWithNotice(data.id ? "Offer updated." : "Offer created.");
 }
 
 export async function deleteOffer(formData: FormData) {
@@ -110,6 +118,7 @@ export async function deleteOffer(formData: FormData) {
   if (error) throw new Error(error.message);
   revalidatePath("/offers");
   revalidatePath("/admin");
+  redirectWithNotice("Offer deleted.");
 }
 
 export async function upsertGalleryItem(formData: FormData) {
@@ -131,6 +140,7 @@ export async function upsertGalleryItem(formData: FormData) {
   if (error) throw new Error(error.message);
   revalidatePath("/gallery");
   revalidatePath("/admin");
+  redirectWithNotice(data.id ? "Gallery image updated." : "Gallery image added.");
 }
 
 export async function updateAppointmentStatus(formData: FormData) {
@@ -140,17 +150,40 @@ export async function updateAppointmentStatus(formData: FormData) {
   const { error } = await supabase.from("appointments").update({ status }).eq("id", id);
   if (error) throw new Error(error.message);
   revalidatePath("/admin");
+  redirectWithNotice("Appointment status saved.");
 }
 
 export async function updateSetting(formData: FormData) {
   const { supabase, userId } = await requireAdmin();
   const key = String(formData.get("key"));
-  const value = JSON.parse(String(formData.get("value") || "{}"));
+  const rawValue = String(formData.get("value") || "").trim();
+  const value = rawValue
+    ? JSON.parse(rawValue)
+    : {
+        phonePrimary: String(formData.get("phonePrimary") || "").trim(),
+        phoneSecondary: String(formData.get("phoneSecondary") || "").trim(),
+        whatsapp: String(formData.get("whatsapp") || "").trim(),
+        email: String(formData.get("email") || "").trim(),
+        instagram: String(formData.get("instagram") || "").trim(),
+        address: String(formData.get("address") || "").trim(),
+        mapsQuery: String(formData.get("mapsQuery") || "").trim(),
+        businessHours: [
+          {
+            day: String(formData.get("businessHoursDay1") || "").trim(),
+            hours: String(formData.get("businessHoursHours1") || "").trim(),
+          },
+          {
+            day: String(formData.get("businessHoursDay2") || "").trim(),
+            hours: String(formData.get("businessHoursHours2") || "").trim(),
+          },
+        ].filter((row) => row.day && row.hours),
+      };
   const { error } = await supabase.from("settings").upsert({ key, value, updated_by: userId });
   if (error) throw new Error(error.message);
   revalidatePath("/");
   revalidatePath("/contact");
   revalidatePath("/admin");
+  redirectWithNotice("Contact settings saved.");
 }
 
 export async function updateBrandAsset(formData: FormData) {
@@ -179,4 +212,5 @@ export async function updateBrandAsset(formData: FormData) {
   revalidatePath("/gallery");
   revalidatePath("/contact");
   revalidatePath("/admin");
+  redirectWithNotice("Brand asset saved.");
 }

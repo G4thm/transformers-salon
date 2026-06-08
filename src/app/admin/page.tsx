@@ -1,6 +1,5 @@
 import type { LucideIcon } from "lucide-react";
 import { CalendarCheck, Gift, Images, Layers3 } from "lucide-react";
-import Image from "next/image";
 import { signOut } from "@/app/actions/auth";
 import {
   deleteOffer,
@@ -12,6 +11,8 @@ import {
   upsertOffer,
   upsertService,
 } from "@/app/actions/admin";
+import { AdminActionNotice } from "@/components/admin-action-notice";
+import { ImageCropField } from "@/components/image-crop-field";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -38,12 +39,18 @@ async function getDashboardData() {
   const supabase = await createClient();
   const [{ data: categories }, { data: services }, { data: offers }, { data: gallery }, { data: appointments }, { data: settings }] =
     await Promise.all([
-      supabase.from("service_categories").select("*").order("display_order"),
-      supabase.from("services").select("*, service_categories(name)").order("display_order"),
-      supabase.from("offers").select("*").order("created_at", { ascending: false }),
-      supabase.from("gallery").select("*").order("display_order"),
-      supabase.from("appointments").select("*").order("appointment_date", { ascending: true }),
-      supabase.from("settings").select("*").order("key"),
+      supabase.from("service_categories").select("id, name, slug, description, display_order, enabled").order("display_order"),
+      supabase
+        .from("services")
+        .select("id, category_id, name, slug, description, image_path, enabled, display_order, service_categories(name)")
+        .order("display_order"),
+      supabase.from("offers").select("id, title, description, image_path, expires_at, enabled, created_at").order("created_at", { ascending: false }),
+      supabase.from("gallery").select("id, title, alt_text, image_path, category, enabled, display_order").order("display_order"),
+      supabase
+        .from("appointments")
+        .select("id, customer_name, phone, service_name, appointment_date, appointment_time, status")
+        .order("appointment_date", { ascending: true }),
+      supabase.from("settings").select("key, value").order("key"),
     ]);
 
   return {
@@ -87,6 +94,7 @@ export default async function AdminPage() {
 
   return (
     <AdminFrame>
+      <AdminActionNotice />
       <section className="grid gap-4 md:grid-cols-4">
         {([
           ["Services", data.services.length, Layers3],
@@ -157,7 +165,9 @@ export default async function AdminPage() {
             <Input name="name" placeholder="Service name" required className="lg:col-span-1" />
             <Input name="slug" placeholder="service-slug" required className="lg:col-span-1" />
             <Input name="image_path" placeholder="Storage image path" className="lg:col-span-1" />
-            <Input name="image_file" type="file" accept="image/*" className="lg:col-span-1" />
+            <div className="lg:col-span-2">
+              <ImageCropField label="Upload and crop service image" aspect={5 / 3} helperText="Crop the image to match the service card before saving." />
+            </div>
             <Input name="display_order" type="number" defaultValue="0" className="lg:col-span-1" />
             <label className="flex items-center gap-2 text-sm font-semibold">
               <input name="enabled" type="checkbox" defaultChecked />
@@ -181,17 +191,16 @@ export default async function AdminPage() {
                   <Input name="name" defaultValue={item.name} placeholder="Service name" required className="lg:col-span-1" />
                   <Input name="slug" defaultValue={item.slug} placeholder="service-slug" required className="lg:col-span-1" />
                   <Input name="image_path" defaultValue={item.image_path ?? ""} placeholder="Storage image path" className="lg:col-span-1" />
-                  <Input name="image_file" type="file" accept="image/*" className="lg:col-span-1" />
+                  <div className="lg:col-span-2">
+                    <ImageCropField label="Replace service image" currentImageUrl={item.image_path ?? undefined} aspect={5 / 3} helperText="Pick a new file or keep the existing path." />
+                  </div>
                   <Input name="display_order" type="number" defaultValue={String(item.display_order)} className="lg:col-span-1" />
                   <label className="flex items-center gap-2 text-sm font-semibold">
                     <input name="enabled" type="checkbox" defaultChecked={item.enabled} />
                     Enabled
                   </label>
                   <Textarea name="description" defaultValue={item.description ?? ""} placeholder="Description" className="lg:col-span-5" />
-                  <div className="flex flex-col gap-3 lg:col-span-6">
-                    {item.image_path ? (
-                      <Image src={item.image_path} alt={item.name} width={160} height={96} className="h-24 w-40 rounded-md border object-cover" />
-                    ) : null}
+                  <div className="lg:col-span-6">
                     <Button type="submit">Save service</Button>
                   </div>
                 </form>
@@ -210,7 +219,9 @@ export default async function AdminPage() {
           <form action={upsertOffer} className="grid gap-4 lg:grid-cols-5" encType="multipart/form-data">
             <Input name="title" placeholder="Offer title" required />
             <Input name="image_path" placeholder="Storage image path" />
-            <Input name="image_file" type="file" accept="image/*" />
+            <div className="lg:col-span-2">
+              <ImageCropField label="Upload and crop offer image" currentImageUrl={undefined} aspect={16 / 9} helperText="Crop the banner image before it saves to storage." />
+            </div>
             <Input name="expires_at" type="date" />
             <label className="flex items-center gap-2 text-sm font-semibold">
               <input name="enabled" type="checkbox" defaultChecked />
@@ -228,17 +239,16 @@ export default async function AdminPage() {
                   <input type="hidden" name="id" value={item.id} />
                   <Input name="title" defaultValue={item.title} placeholder="Offer title" required />
                   <Input name="image_path" defaultValue={item.image_path ?? ""} placeholder="Storage image path" />
-                  <Input name="image_file" type="file" accept="image/*" />
+                  <div className="lg:col-span-2">
+                    <ImageCropField label="Replace offer image" currentImageUrl={item.image_path ?? undefined} aspect={16 / 9} helperText="Pick a new banner crop or keep the current image." />
+                  </div>
                   <Input name="expires_at" type="date" defaultValue={item.expires_at ? String(item.expires_at).slice(0, 10) : ""} />
                   <label className="flex items-center gap-2 text-sm font-semibold">
                     <input name="enabled" type="checkbox" defaultChecked={item.enabled} />
                     Enabled
                   </label>
                   <Textarea name="description" defaultValue={item.description ?? ""} placeholder="Offer description" className="lg:col-span-5" />
-                  <div className="flex flex-col gap-3 lg:col-span-5">
-                    {item.image_path ? (
-                      <Image src={item.image_path} alt={item.title} width={240} height={135} className="h-28 w-48 rounded-md border object-cover" />
-                    ) : null}
+                  <div className="lg:col-span-5">
                     <Button type="submit">Save offer</Button>
                   </div>
                 </form>
@@ -257,7 +267,9 @@ export default async function AdminPage() {
           <form action={upsertGalleryItem} className="grid gap-4 lg:grid-cols-6" encType="multipart/form-data">
             <Input name="title" placeholder="Image title" required />
             <Input name="image_path" placeholder="Storage image path" required />
-            <Input name="image_file" type="file" accept="image/*" />
+            <div className="lg:col-span-2">
+              <ImageCropField label="Upload and crop gallery image" currentImageUrl={undefined} aspect={1} helperText="Crop the image to fit the gallery tile." required />
+            </div>
             <Input name="category" placeholder="Category" />
             <Input name="display_order" type="number" defaultValue="0" />
             <label className="flex items-center gap-2 text-sm font-semibold">
@@ -276,7 +288,9 @@ export default async function AdminPage() {
                   <input type="hidden" name="id" value={item.id} />
                   <Input name="title" defaultValue={item.title} placeholder="Image title" required />
                   <Input name="image_path" defaultValue={item.image_path} placeholder="Storage image path" required />
-                  <Input name="image_file" type="file" accept="image/*" />
+                  <div className="lg:col-span-2">
+                    <ImageCropField label="Replace gallery image" currentImageUrl={item.image_path} aspect={1} helperText="Pick a new image crop or keep the current image." />
+                  </div>
                   <Input name="category" defaultValue={item.category ?? ""} placeholder="Category" />
                   <Input name="display_order" type="number" defaultValue={String(item.display_order)} />
                   <label className="flex items-center gap-2 text-sm font-semibold">
@@ -305,11 +319,27 @@ export default async function AdminPage() {
       <DashboardSection title="Settings" description="Update contact information, hours, social links, and WhatsApp configuration.">
         <form action={updateSetting} className="grid gap-4">
           <input type="hidden" name="key" value="contact" />
-          <Textarea
-            name="value"
-            defaultValue={JSON.stringify(contactValue, null, 2)}
-            className="min-h-52 font-mono text-xs"
-          />
+          <div className="grid gap-4 lg:grid-cols-2">
+            <Input name="phonePrimary" defaultValue={contactValue.phonePrimary} placeholder="Primary phone" />
+            <Input name="phoneSecondary" defaultValue={contactValue.phoneSecondary} placeholder="Secondary phone" />
+            <Input name="whatsapp" defaultValue={contactValue.whatsapp} placeholder="WhatsApp number" />
+            <Input name="email" defaultValue={contactValue.email} placeholder="Email address" />
+            <Input name="instagram" defaultValue={contactValue.instagram} placeholder="Instagram handle" />
+            <Input name="mapsQuery" defaultValue={contactValue.mapsQuery} placeholder="Google Maps search text" />
+            <Textarea name="address" defaultValue={contactValue.address} placeholder="Salon address" className="lg:col-span-2" />
+          </div>
+          <div className="grid gap-4 rounded-xl border bg-background/60 p-4">
+            <div>
+              <p className="font-semibold">Business hours</p>
+              <p className="text-sm text-muted-foreground">Enter the opening schedule shown on the contact page and footer.</p>
+            </div>
+            <div className="grid gap-3 lg:grid-cols-2">
+              <Input name="businessHoursDay1" defaultValue={contactValue.businessHours[0]?.day ?? ""} placeholder="Day label" />
+              <Input name="businessHoursHours1" defaultValue={contactValue.businessHours[0]?.hours ?? ""} placeholder="Hours" />
+              <Input name="businessHoursDay2" defaultValue={contactValue.businessHours[1]?.day ?? ""} placeholder="Day label" />
+              <Input name="businessHoursHours2" defaultValue={contactValue.businessHours[1]?.hours ?? ""} placeholder="Hours" />
+            </div>
+          </div>
           <Button type="submit">Save contact settings</Button>
         </form>
       </DashboardSection>
@@ -329,13 +359,12 @@ export default async function AdminPage() {
                   <p className="font-semibold">{slot.label}</p>
                   <p className="text-xs text-muted-foreground">{slot.hint}</p>
                 </div>
-                <Image src={slot.preview} alt={slot.label} width={640} height={360} className="h-40 w-full rounded-md border object-cover" />
                 <AdminModal triggerLabel="Edit slot" title={slot.label} description={slot.hint}>
                   <form action={updateBrandAsset} className="grid gap-3" encType="multipart/form-data">
                     <input type="hidden" name="key" value="brand_assets" />
                     <input type="hidden" name="asset" value={slot.asset} />
                     <Input name="image_path" defaultValue={String(slot.preview)} placeholder="Public image URL or storage path" />
-                    <Input name="image_file" type="file" accept="image/*" />
+                    <ImageCropField label={`Replace ${slot.label.toLowerCase()}`} currentImageUrl={String(slot.preview)} aspect={16 / 9} helperText="Crop the asset before saving it to the selected slot." />
                     <Button type="submit">Save slot</Button>
                   </form>
                 </AdminModal>
