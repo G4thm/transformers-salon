@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 import { brand, brandAssets, businessHours, gallery as staticGallery, offers as staticOffers, serviceCategories as staticCategories, services as staticServices } from "@/data/brand";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/server";
 
@@ -199,17 +200,25 @@ export async function getPublicContent(): Promise<PublicContent> {
 
   try {
     const supabase = await createClient();
-    const [categoriesResult, servicesResult, offersResult, galleryResult, settingsResult, assetsResult] = await Promise.all([
-      supabase.from("service_categories").select("id, name, slug, description, display_order, enabled").order("display_order"),
-      supabase
-        .from("services")
-        .select("id, category_id, name, slug, description, image_path, enabled, display_order, service_categories(id, name, slug)")
-        .order("display_order"),
-      supabase.from("offers").select("id, title, description, image_path, expires_at, enabled, created_at").order("created_at", { ascending: false }),
-      supabase.from("gallery").select("id, title, alt_text, image_path, category, enabled, display_order").order("display_order"),
-      supabase.from("settings").select("key, value").eq("key", "contact").maybeSingle(),
-      supabase.from("settings").select("key, value").eq("key", "brand_assets").maybeSingle(),
-    ]);
+    const fetchPublicData = unstable_cache(
+      async () => {
+        const [categoriesResult, servicesResult, offersResult, galleryResult, settingsResult, assetsResult] = await Promise.all([
+          supabase.from("service_categories").select("id, name, slug, description, display_order, enabled").order("display_order"),
+          supabase
+            .from("services")
+            .select("id, category_id, name, slug, description, image_path, enabled, display_order, service_categories(id, name, slug)")
+            .order("display_order"),
+          supabase.from("offers").select("id, title, description, image_path, expires_at, enabled, created_at").order("created_at", { ascending: false }),
+          supabase.from("gallery").select("id, title, alt_text, image_path, category, enabled, display_order").order("display_order"),
+          supabase.from("settings").select("key, value").eq("key", "contact").maybeSingle(),
+          supabase.from("settings").select("key, value").eq("key", "brand_assets").maybeSingle(),
+        ]);
+        return { categoriesResult, servicesResult, offersResult, galleryResult, settingsResult, assetsResult };
+      },
+      ["public-content"],
+      { revalidate: 3600 },
+    );
+    const { categoriesResult, servicesResult, offersResult, galleryResult, settingsResult, assetsResult } = await fetchPublicData();
 
     const categories =
       categoriesResult.data?.filter((category) => category.enabled).map((category) => ({

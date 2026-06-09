@@ -20,12 +20,10 @@ export const metadata: Metadata = {
     template: "%s | Transformers Salon",
   },
   description:
-    "Premium unisex salon and beauty atelier in Puducherry with appointment booking, offers, gallery, and admin management.",
+    "Luxury unisex salon in Puducherry — precision haircuts, beard styling, hair coloring, facials & more. Book your appointment online.",
   metadataBase: new URL("https://transformerssalon.in"),
   icons: {
-    icon: [
-      { url: "/brand/fox-mascot.webp", type: "image/webp" },
-    ],
+    icon: [{ url: "/brand/fox-mascot.webp", type: "image/webp" }],
     apple: "/brand/fox-mascot.webp",
     shortcut: "/brand/fox-mascot.webp",
   },

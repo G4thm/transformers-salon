@@ -155,53 +155,107 @@ export default async function AdminPage() {
       </DashboardSection>
 
       <DashboardSection title="Services" description="Add, edit, disable, delete, and attach Storage image paths.">
-        <AdminModal triggerLabel="Add service" title="New service" description="Create a service, upload its image, and keep the public page in sync.">
-          <form action={upsertService} className="grid gap-4 lg:grid-cols-6" encType="multipart/form-data">
-            <select name="category_id" required className="h-11 rounded-md border bg-background px-3 text-sm lg:col-span-1">
-              {data.categories.map((category) => (
-                <option key={category.id} value={category.id}>{category.name}</option>
-              ))}
-            </select>
-            <Input name="name" placeholder="Service name" required className="lg:col-span-1" />
-            <Input name="slug" placeholder="service-slug" required className="lg:col-span-1" />
-            <Input name="image_path" placeholder="Storage image path" className="lg:col-span-1" />
-            <div className="lg:col-span-2">
-              <ImageCropField label="Upload and crop service image" aspect={5 / 3} helperText="Crop the image to match the service card before saving." />
+        <AdminModal triggerLabel="Add service" title="New service" description="Create a service for the public menu.">
+          <form action={upsertService} encType="multipart/form-data">
+            <div className="grid gap-5 rounded-xl border bg-muted/30 p-5 shadow-sm lg:grid-cols-[1fr_180px]">
+              {/* Left column — text fields */}
+              <div className="grid gap-4">
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <label className="grid gap-1 text-sm font-semibold">
+                    Category
+                    <select name="category_id" required className="h-10 rounded-md border bg-background px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                      {data.categories.map((category) => (
+                        <option key={category.id} value={category.id}>{category.name}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="grid gap-1 text-sm font-semibold">
+                    Service Name
+                    <Input name="name" placeholder="e.g. Haircuts" required />
+                  </label>
+                </div>
+                <label className="grid gap-1 text-sm font-semibold">
+                  URL Name
+                  <Input name="slug" placeholder="e.g. haircuts" required />
+                  <span className="text-xs font-normal text-muted-foreground">Auto-filled. No spaces allowed.</span>
+                </label>
+                <label className="grid gap-1 text-sm font-semibold">
+                  Description
+                  <Textarea name="description" placeholder="Short description shown to customers" rows={3} />
+                </label>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <label className="grid gap-1 text-sm font-semibold">
+                    Display Order
+                    <Input name="display_order" type="number" defaultValue="0" placeholder="0" />
+                    <span className="text-xs font-normal text-muted-foreground">Lower number shows first</span>
+                  </label>
+                  <label className="flex cursor-pointer items-center gap-3 rounded-xl border bg-background p-3 text-sm font-semibold">
+                    <span className="flex-1">Visible on website</span>
+                    <input name="enabled" type="checkbox" defaultChecked className="size-5 accent-primary" />
+                  </label>
+                </div>
+              </div>
+              {/* Right column — image */}
+              <div className="flex flex-col gap-2">
+                <p className="text-sm font-semibold">Image</p>
+                <ImageCropField label="Service image" aspect={5 / 3} helperText="Crop before saving." />
+              </div>
             </div>
-            <Input name="display_order" type="number" defaultValue="0" className="lg:col-span-1" />
-            <label className="flex items-center gap-2 text-sm font-semibold">
-              <input name="enabled" type="checkbox" defaultChecked />
-              Enabled
-            </label>
-            <Textarea name="description" placeholder="Description" className="lg:col-span-5" />
-            <Button type="submit">Add service</Button>
+            <div className="mt-4 flex items-center justify-end gap-3">
+              <Button type="submit" size="sm">Add service</Button>
+            </div>
           </form>
         </AdminModal>
         <div className="grid gap-4">
           {data.services.map((item) => (
             <Card key={item.id} className="border bg-background/60">
               <CardContent className="flex flex-col gap-4 p-4">
-                <form action={upsertService} className="grid gap-4 lg:grid-cols-6" encType="multipart/form-data">
+                <form action={upsertService} encType="multipart/form-data">
                   <input type="hidden" name="id" value={item.id} />
-                  <select name="category_id" defaultValue={item.category_id} required className="h-11 rounded-md border bg-background px-3 text-sm lg:col-span-1">
-                    {data.categories.map((category) => (
-                      <option key={category.id} value={category.id}>{category.name}</option>
-                    ))}
-                  </select>
-                  <Input name="name" defaultValue={item.name} placeholder="Service name" required className="lg:col-span-1" />
-                  <Input name="slug" defaultValue={item.slug} placeholder="service-slug" required className="lg:col-span-1" />
-                  <Input name="image_path" defaultValue={item.image_path ?? ""} placeholder="Storage image path" className="lg:col-span-1" />
-                  <div className="lg:col-span-2">
-                    <ImageCropField label="Replace service image" currentImageUrl={item.image_path ?? undefined} aspect={5 / 3} helperText="Pick a new file or keep the existing path." />
+                  <div className="grid gap-5 rounded-xl border bg-muted/30 p-4 shadow-sm lg:grid-cols-[1fr_180px]">
+                    <div className="grid gap-4">
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <label className="grid gap-1 text-sm font-semibold">
+                          Category
+                          <select name="category_id" defaultValue={item.category_id} required className="h-10 rounded-md border bg-background px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                            {data.categories.map((category) => (
+                              <option key={category.id} value={category.id}>{category.name}</option>
+                            ))}
+                          </select>
+                        </label>
+                        <label className="grid gap-1 text-sm font-semibold">
+                          Service Name
+                          <Input name="name" defaultValue={item.name} placeholder="e.g. Haircuts" required />
+                        </label>
+                      </div>
+                      <label className="grid gap-1 text-sm font-semibold">
+                        URL Name
+                        <Input name="slug" defaultValue={item.slug} placeholder="e.g. haircuts" required />
+                        <span className="text-xs font-normal text-muted-foreground">No spaces allowed.</span>
+                      </label>
+                      <label className="grid gap-1 text-sm font-semibold">
+                        Description
+                        <Textarea name="description" defaultValue={item.description ?? ""} placeholder="Short description shown to customers" rows={3} />
+                      </label>
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <label className="grid gap-1 text-sm font-semibold">
+                          Display Order
+                          <Input name="display_order" type="number" defaultValue={String(item.display_order)} />
+                          <span className="text-xs font-normal text-muted-foreground">Lower number shows first</span>
+                        </label>
+                        <label className="flex cursor-pointer items-center gap-3 rounded-xl border bg-background p-3 text-sm font-semibold">
+                          <span className="flex-1">Visible on website</span>
+                          <input name="enabled" type="checkbox" defaultChecked={item.enabled} className="size-5 accent-primary" />
+                        </label>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <p className="text-sm font-semibold">Image</p>
+                      <ImageCropField label="Service image" currentImageUrl={item.image_path ?? undefined} aspect={5 / 3} helperText="Pick a new file or keep existing." />
+                    </div>
                   </div>
-                  <Input name="display_order" type="number" defaultValue={String(item.display_order)} className="lg:col-span-1" />
-                  <label className="flex items-center gap-2 text-sm font-semibold">
-                    <input name="enabled" type="checkbox" defaultChecked={item.enabled} />
-                    Enabled
-                  </label>
-                  <Textarea name="description" defaultValue={item.description ?? ""} placeholder="Description" className="lg:col-span-5" />
-                  <div className="lg:col-span-6">
-                    <Button type="submit">Save service</Button>
+                  <div className="mt-3 flex items-center justify-end gap-3">
+                    <Button type="submit" size="sm">Save service</Button>
                   </div>
                 </form>
                 <form action={deleteService} className="self-start">

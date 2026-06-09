@@ -15,6 +15,15 @@ const initialState: ActionState = { ok: false, message: "" };
 export function AppointmentForm({ selectedService, services }: { selectedService?: string; services?: PublicService[] }) {
   const [state, action, pending] = useActionState(createAppointment, initialState);
   const visibleServices = services ?? fallbackServices;
+  // Deduplicate by name — keep first occurrence only
+  const uniqueServices = useMemo(() => {
+    const seen = new Set<string>();
+    return visibleServices.filter((s) => {
+      if (seen.has(s.name)) return false;
+      seen.add(s.name);
+      return true;
+    });
+  }, [visibleServices]);
   const whatsappHref = useMemo(() => {
     const text = `Hello Transformers Salon, I want to book an appointment${selectedService ? ` for ${selectedService}` : ""}.`;
     return `https://wa.me/91${brand.whatsapp}?text=${encodeURIComponent(text)}`;
@@ -49,7 +58,7 @@ export function AppointmentForm({ selectedService, services }: { selectedService
               <option value="" disabled>
                 Select service
               </option>
-              {visibleServices.map((service) => (
+              {uniqueServices.map((service) => (
                 <option key={service.id} value={service.name}>
                   {service.name}
                 </option>
