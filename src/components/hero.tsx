@@ -9,7 +9,7 @@ export async function Hero() {
   const { contact, assets } = await getPublicContent();
 
   return (
-    <section className="relative overflow-hidden border-b">
+    <section className="hero-grain relative overflow-hidden border-b">
       <div className="absolute inset-0 -z-10 bg-[linear-gradient(120deg,rgb(249_115_22_/_18%),transparent_32%,rgb(0_0_0_/_0%))]" />
       <div className="mx-auto grid min-h-[calc(100svh-5rem)] max-w-7xl items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1fr_0.85fr] lg:px-8">
         <div className="flex flex-col gap-7">
@@ -26,13 +26,13 @@ export async function Hero() {
             </p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row">
-            <Button asChild size="lg">
+            <Button asChild size="lg" className="rounded-full">
               <Link href="/book">
                 Book appointment
                 <ArrowRight data-icon="inline-end" />
               </Link>
             </Button>
-            <Button asChild variant="outline" size="lg">
+            <Button asChild variant="outline" size="lg" className="rounded-full">
               <a href={`tel:${contact.phonePrimary}`}>
                 <Phone data-icon="inline-start" />
                 Call salon

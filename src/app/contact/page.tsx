@@ -16,10 +16,13 @@ export default async function ContactPage() {
 
   return (
     <PageShell>
-      <section className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:px-8">
+      <section className="hero-grain mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:px-8">
         <div className="flex flex-col gap-6">
-          <Badge>Contact</Badge>
-          <h1 className="text-4xl font-black sm:text-5xl">Visit the fox atelier in Puducherry.</h1>
+          <Badge className="w-fit border-l-4 border-l-primary pl-3">Contact</Badge>
+          <h1 className="text-4xl font-black sm:text-5xl">
+            Visit the fox atelier in Puducherry.
+            <span className="mt-2 block h-1 w-16 rounded-full bg-primary" />
+          </h1>
 
           {/* ── Clickable contact cards ── */}
           <Card className="glass">

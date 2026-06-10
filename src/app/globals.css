@@ -26,25 +26,25 @@
 }
 
 .dark {
-  --background: #030303;
+  --background: #0a0a0a;
   --foreground: #f8fafc;
-  --card: #0b0b0d;
+  --card: #111111;
   --card-foreground: #f8fafc;
-  --popover: #0b0b0d;
+  --popover: #111111;
   --popover-foreground: #f8fafc;
   --primary: #ff7a1a;
   --primary-foreground: #050505;
   --secondary: #18181b;
   --secondary-foreground: #f8fafc;
   --muted: #18181b;
-  --muted-foreground: #a1a1aa;
+  --muted-foreground: #9ca3af;
   --accent: #251105;
   --accent-foreground: #fed7aa;
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
   --border: #27272a;
   --input: #27272a;
-  --ring: #ff7a1a;
+  --ring: #f97316;
   --glass: rgb(10 10 10 / 72%);
   --glass-border: rgb(255 255 255 / 12%);
 }
@@ -75,6 +75,8 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --radius-card: 12px;
+  --radius-input: 8px;
 }
 
 * {
@@ -151,4 +153,119 @@ textarea {
   .glass {
     backdrop-filter: blur(8px);
   }
+}
+
+/* ── Section heading orange underline accent ── */
+.section-heading {
+  display: flex;
+  flex-direction: column;
+}
+
+.section-heading::after {
+  content: "";
+  display: block;
+  margin-top: 0.5rem;
+  height: 3px;
+  width: 3rem;
+  border-radius: 9999px;
+  background: var(--primary);
+}
+
+/* ── Card image container — consistent fixed heights ── */
+.card-img-offer {
+  position: relative;
+  height: 200px;
+  width: 100%;
+  overflow: hidden;
+  background: var(--muted);
+  flex-shrink: 0;
+}
+
+.card-img-service {
+  position: relative;
+  height: 220px;
+  width: 100%;
+  overflow: hidden;
+  background: var(--muted);
+  flex-shrink: 0;
+}
+
+/* ── Premium card hover glow ── */
+.card-hover-orange {
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.card-hover-orange:hover {
+  transform: translateY(-4px);
+  border-color: rgb(249 115 22 / 50%);
+  box-shadow: 0 8px 32px rgb(249 115 22 / 20%);
+}
+
+/* ── Hero grain texture overlay ── */
+.hero-grain {
+  position: relative;
+}
+.hero-grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+  pointer-events: none;
+  opacity: 0.35;
+}
+
+/* ── Glass hero with grain ── */
+.glass-hero {
+  backdrop-filter: blur(24px) saturate(1.4);
+  background: rgb(10 10 10 / 60%);
+  border: 1px solid rgb(255 255 255 / 8%);
+}
+
+/* ── Input orange focus ring ── */
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: none;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px rgb(249 115 22 / 20%);
+}
+
+/* ── Admin section title left bar ── */
+.admin-section-title {
+  border-left: 3px solid var(--primary);
+  padding-left: 0.75rem;
+  font-weight: 800;
+  font-size: 1.25rem;
+}
+
+/* ── Smooth card lift ── */
+.card-lift {
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.card-lift:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 16px 48px rgb(0 0 0 / 30%), 0 4px 16px rgb(249 115 22 / 12%);
+}
+
+/* ── Glow pill badge (left border accent) ── */
+.pill-glow {
+  border-left: 3px solid var(--primary);
+  box-shadow: -4px 0 12px rgb(249 115 22 / 30%), 0 0 20px rgb(249 115 22 / 10%);
+}
+
+/* ── Orange gradient button ── */
+.btn-orange-gradient {
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  color: white;
+  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+.btn-orange-gradient:hover {
+  background: linear-gradient(135deg, #fb923c, #f97316);
+  box-shadow: 0 8px 24px rgb(249 115 22 / 35%);
+  transform: translateY(-1px);
+}
+.btn-orange-gradient:active {
+  transform: translateY(0);
 }

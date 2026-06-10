@@ -14,9 +14,9 @@ export const brand = {
 };
 
 export const brandAssets = {
-  logoWide: "/brand/brand-logo-wide.jpeg",
+  logoWide: "/brand/logo-web.jpeg",
   mascot: "/brand/fox-mascot.webp",
-  foxLogo: "/brand/fox-logo.png",
+  foxLogo: "/brand/fox-mascot.webp",
   grandOpening: "/brand/grand-opening.jpeg",
   contactCard: "/brand/contact-card.jpeg",
 };

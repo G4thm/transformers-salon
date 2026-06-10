@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Cropper, { type Area, type Point } from "react-easy-crop";
-import { Crop, ImagePlus, RotateCcw, ZoomIn, ZoomOut, X } from "lucide-react";
+import { ImagePlus, RotateCcw, ZoomIn, ZoomOut, X } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 
@@ -147,30 +147,37 @@ export function ImageCropField({
   }
 
   return (
-    <div className="grid gap-3 rounded-xl border bg-card/60 p-4">
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <p className="text-sm font-semibold">{label}</p>
-          <p className="text-xs text-muted-foreground">{helperText}</p>
-        </div>
-        <Button type="button" variant="outline" size="sm" onClick={() => fileInputRef.current?.click()}>
-          <ImagePlus className="size-4" />
-          Select image
-        </Button>
-      </div>
+    <div className="grid gap-3">
       <input ref={fileInputRef} name={name} type="file" accept="image/*" required={required} className="hidden" onChange={handleFileChange} />
-      <div className="overflow-hidden rounded-lg border bg-background/80" style={{ aspectRatio: aspect }}>
+
+      {/* Fixed-size clickable preview box */}
+      <button
+        type="button"
+        onClick={() => fileInputRef.current?.click()}
+        className="group relative overflow-hidden rounded-xl border-2 border-dashed border-border bg-background/80 transition-all duration-200 hover:border-primary/60 hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+        style={{ width: '240px', height: '180px', maxWidth: '100%' }}
+        aria-label="Select image"
+      >
         {preview ? (
-          <div className="relative h-full w-full">
-            <Image src={preview} alt={label} fill unoptimized className="object-cover" />
-          </div>
+          // Image filled
+          <Image src={preview} alt={label} fill unoptimized className="object-cover" />
         ) : (
-          <div className="flex h-full flex-col items-center justify-center gap-2 text-muted-foreground">
-            <Crop className="size-6" />
-            <span className="text-sm">No image selected yet</span>
-          </div>
+          // Empty placeholder
+          <span className="flex h-full flex-col items-center justify-center gap-2 text-muted-foreground">
+            <ImagePlus className="size-8 opacity-50 transition-opacity group-hover:opacity-80" />
+            <span className="text-xs font-semibold">Click to upload</span>
+          </span>
         )}
-      </div>
+        {/* Hover overlay */}
+        {preview && (
+          <span className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
+            <ImagePlus className="size-6 text-white" />
+            <span className="text-xs font-semibold text-white">Change image</span>
+          </span>
+        )}
+      </button>
+
+      {helperText && <p className="text-xs text-muted-foreground">{helperText}</p>}
 
       {isOpen && imageSrc ? (
         <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/70 p-4">
