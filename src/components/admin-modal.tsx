@@ -19,7 +19,11 @@ export function AdminModal({ triggerLabel, title, description, children }: Admin
       <Button type="button" onClick={() => dialogRef.current?.showModal()}>
         {triggerLabel}
       </Button>
-      <dialog ref={dialogRef} className="backdrop:bg-black/60 fixed inset-0 z-50 m-auto w-[min(92vw,64rem)] rounded-2xl border bg-background p-0 shadow-2xl">
+      <dialog
+        ref={dialogRef}
+        onSubmit={() => dialogRef.current?.close()}
+        className="backdrop:bg-black/60 fixed inset-0 z-50 m-auto w-[min(92vw,64rem)] rounded-2xl border bg-background p-0 shadow-2xl"
+      >
         <div className="flex items-start justify-between gap-4 border-b p-5">
           <div>
             <h3 className="text-xl font-black">{title}</h3>
