@@ -159,8 +159,10 @@ export function ImageCropField({
         aria-label="Select image"
       >
         {preview ? (
-          // Image filled
-          <Image src={preview} alt={label} fill unoptimized className="object-cover" />
+          // Image filled — needs a relative positioned wrapper for Next.js fill
+          <span className="absolute inset-0">
+            <Image src={preview} alt={label} fill unoptimized className="object-cover" />
+          </span>
         ) : (
           // Empty placeholder
           <span className="flex h-full flex-col items-center justify-center gap-2 text-muted-foreground">

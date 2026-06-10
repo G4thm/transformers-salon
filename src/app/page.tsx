@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, CalendarDays, Gem, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowRight, CalendarDays, Gem, Sparkles } from "lucide-react";
 import { AppointmentForm } from "@/components/appointment-form";
 import { Hero } from "@/components/hero";
 import { MotionSection } from "@/components/motion-section";
@@ -23,7 +23,7 @@ export default async function Home() {
         {[
           ["Luxury finish", "Glass-clean interiors, careful consultations, and refined service rituals."],
           ["Unisex expertise", "Men's grooming and women's beauty services under one premium atelier."],
-          ["Editable platform", "Services, offers, gallery, appointments, and settings managed from dashboard."],
+          ["Premium experience", "No prices online. Every service is tailored, personal, and guided in-salon."],
         ].map(([title, text]) => (
           <Card key={title} className="glass rounded-xl border-border/50 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-[0_8px_32px_rgb(249_115_22_/_15%)]">
             <CardContent className="flex flex-col gap-4 p-6">
@@ -96,24 +96,6 @@ export default async function Home() {
           </h2>
         </div>
         <AppointmentForm services={content.services} />
-      </MotionSection>
-
-      {/* Admin CTA */}
-      <MotionSection className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 lg:px-8">
-        <div className="glass flex flex-col gap-5 rounded-xl p-8 md:flex-row md:items-center md:justify-between">
-          <div>
-            <h2 className="text-2xl font-black">Dashboard ready from day one</h2>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Secure admin tools are prepared for services, offers, gallery, appointments, and business settings.
-            </p>
-          </div>
-          <Button asChild variant="outline" className="w-fit rounded-full">
-            <Link href="/login">
-              <ShieldCheck data-icon="inline-start" />
-              Admin login
-            </Link>
-          </Button>
-        </div>
       </MotionSection>
     </PageShell>
   );
