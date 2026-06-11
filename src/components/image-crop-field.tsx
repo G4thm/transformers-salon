@@ -32,8 +32,17 @@ function loadImage(url: string) {
   });
 }
 
+// Max dimension for output — keeps uploads well under Vercel's 4.5 MB body limit.
+const MAX_OUTPUT_PX = 1200;
+
 async function getCroppedFile(imageSrc: string, cropPixels: Area, fileName: string, fileType: string) {
   const image = await loadImage(imageSrc);
+
+  // Scale down if either dimension exceeds MAX_OUTPUT_PX
+  const scale = Math.min(1, MAX_OUTPUT_PX / Math.max(cropPixels.width, cropPixels.height));
+  const outW = Math.round(cropPixels.width * scale);
+  const outH = Math.round(cropPixels.height * scale);
+
   const canvas = document.createElement("canvas");
   const context = canvas.getContext("2d");
 
@@ -41,8 +50,8 @@ async function getCroppedFile(imageSrc: string, cropPixels: Area, fileName: stri
     throw new Error("Unable to crop image.");
   }
 
-  canvas.width = cropPixels.width;
-  canvas.height = cropPixels.height;
+  canvas.width = outW;
+  canvas.height = outH;
   context.drawImage(
     image,
     cropPixels.x,
@@ -51,9 +60,13 @@ async function getCroppedFile(imageSrc: string, cropPixels: Area, fileName: stri
     cropPixels.height,
     0,
     0,
-    cropPixels.width,
-    cropPixels.height,
+    outW,
+    outH,
   );
+
+  // Always output as JPEG at 0.82 quality — good visual quality, small file size
+  const outputType = "image/jpeg";
+  const outputName = fileName.replace(/\.[^.]+$/, "") + ".jpg";
 
   const blob = await new Promise<Blob>((resolve, reject) => {
     canvas.toBlob((result) => {
@@ -62,10 +75,10 @@ async function getCroppedFile(imageSrc: string, cropPixels: Area, fileName: stri
       } else {
         reject(new Error("Unable to export cropped image."));
       }
-    }, fileType || "image/jpeg", 0.95);
+    }, outputType, 0.82);
   });
 
-  return new File([blob], fileName, { type: blob.type || fileType || "image/jpeg" });
+  return new File([blob], outputName, { type: outputType });
 }
 
 function clampZoom(value: number) {

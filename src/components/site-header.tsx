@@ -1,10 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
-import { CalendarDays, Menu, Phone, Shield } from "lucide-react";
+import { CalendarDays, Phone, Shield } from "lucide-react";
 import { brand } from "@/data/brand";
 import { getPublicContent } from "@/lib/public-content";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
+import { MobileNav } from "@/components/mobile-nav";
 
 const nav = [
   { href: "/", label: "Home" },
@@ -64,12 +65,8 @@ export async function SiteHeader() {
               <Shield data-icon="inline-start" />
             </Link>
           </Button>
-          {/* Mobile nav — shows navigation menu, not a /services redirect */}
-          <Button asChild variant="ghost" size="icon" className="lg:hidden" aria-label="Open navigation">
-            <Link href="/services">
-              <Menu data-icon="inline-start" />
-            </Link>
-          </Button>
+          {/* Mobile nav drawer */}
+          <MobileNav />
         </div>
       </div>
     </header>
