@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 /** Keyword → static image fallback when no image_path is set in DB */
 const AUTO_IMAGE_MAP: Record<string, string> = {
   haircut: "/services/haircuts.jpg",
-  hair cut: "/services/haircuts.jpg",
+  "hair cut": "/services/haircuts.jpg",
   beard: "/services/beard.jpg",
   shave: "/services/beard.jpg",
   color: "/services/coloring.jpg",
