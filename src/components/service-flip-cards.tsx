@@ -34,8 +34,11 @@ function getAutoImage(name: string): string {
   return "/services/haircuts.jpg"; // generic fallback
 }
 
-export function ServiceFlipCards({ category, services }: { category: "men" | "women"; services?: PublicService[] }) {
-  const visible = (services ?? fallbackServices).filter((service) => service.category === category);
+/** Minimal type accepted by this component — works with both static fallback and PublicService */
+type ServiceItem = { id: string; category: string; name: string; description: string; imagePath?: string | null };
+
+export function ServiceFlipCards({ category, services }: { category: "men" | "women"; services?: ServiceItem[] }) {
+  const visible = (services ?? (fallbackServices as ServiceItem[])).filter((service) => service.category === category);
 
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
