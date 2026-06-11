@@ -18,6 +18,7 @@ import {
 import { AdminActionNotice } from "@/components/admin-action-notice";
 import { ImageCropField } from "@/components/image-crop-field";
 import { GalleryManager } from "@/components/gallery-manager";
+import { GalleryUploader } from "@/components/gallery-uploader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -421,30 +422,8 @@ export default async function AdminPage() {
 
       {/* Gallery */}
       <DashboardSection title="Gallery" description="Upload images to Supabase Storage, then manage gallery records here.">
-        <AdminModal triggerLabel="Add gallery image" title="New gallery image" description="Select one or more images to upload. Title is auto-set from the filename.">
-          <form action={upsertGalleryItem} className="grid gap-4" encType="multipart/form-data">
-            <div className="grid gap-2">
-              <label className="text-sm font-semibold">Images (select multiple)</label>
-              <input
-                name="image_files[]"
-                type="file"
-                accept="image/*"
-                multiple
-                required
-                className="block w-full rounded-md border bg-background px-3 py-2 text-sm file:mr-3 file:rounded file:border-0 file:bg-primary/10 file:px-3 file:py-1 file:text-sm file:font-semibold file:text-primary hover:file:bg-primary/20"
-              />
-              <p className="text-xs text-muted-foreground">Hold Ctrl / Cmd to select multiple files. Titles are auto-generated from filenames.</p>
-            </div>
-            <label className="grid gap-1 text-sm font-semibold">
-              Category <span className="font-normal text-muted-foreground">(optional)</span>
-              <Input name="category" placeholder="e.g. men, women, bridal" />
-            </label>
-            <label className="flex items-center gap-2 text-sm font-semibold">
-              <input name="enabled" type="checkbox" defaultChecked className="size-4 accent-primary" />
-              Visible on website
-            </label>
-            <Button type="submit">Upload images</Button>
-          </form>
+        <AdminModal triggerLabel="Add gallery image" title="Add gallery images" description="Select one or more images — they are compressed automatically before upload.">
+          <GalleryUploader />
         </AdminModal>
         <GalleryManager items={data.gallery} />
       </DashboardSection>
