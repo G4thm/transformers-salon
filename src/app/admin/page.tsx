@@ -2,6 +2,7 @@ import type { LucideIcon } from "lucide-react";
 import { CalendarCheck, Gift, Images, Layers3, Save, Trash2 } from "lucide-react";
 import { signOut } from "@/app/actions/auth";
 import {
+  bulkDeleteGalleryItems,
   deleteGalleryItem,
   deleteOffer,
   deleteService,
@@ -16,6 +17,7 @@ import {
 } from "@/app/actions/admin";
 import { AdminActionNotice } from "@/components/admin-action-notice";
 import { ImageCropField } from "@/components/image-crop-field";
+import { GalleryManager } from "@/components/gallery-manager";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -444,45 +446,7 @@ export default async function AdminPage() {
             <Button type="submit">Upload images</Button>
           </form>
         </AdminModal>
-        <div className="grid gap-4">
-          {data.gallery.map((item, index) => (
-            <Card key={item.id} className={`rounded-xl shadow-md ${index % 2 === 0 ? "" : "bg-muted/20"}`}>
-              <CardContent className="flex flex-col gap-4 p-4">
-                <form action={upsertGalleryItem} className="grid gap-4 lg:grid-cols-6" encType="multipart/form-data">
-                  <input type="hidden" name="id" value={item.id} />
-                  <input type="hidden" name="image_path" value={item.image_path} />
-                  <Input name="title" defaultValue={item.title} placeholder="Image title" required className="lg:col-span-2" />
-                  <div className="lg:col-span-2">
-                    <ImageCropField
-                      label="Replace gallery image"
-                      currentImageUrl={item.image_path}
-                      aspect={1}
-                      helperText="Pick a new image or keep the current one."
-                    />
-                  </div>
-                  <Input name="category" defaultValue={item.category ?? ""} placeholder="Category" />
-                  <label className="flex items-center gap-2 text-sm font-semibold">
-                    <input name="enabled" type="checkbox" defaultChecked={item.enabled} className="size-4 accent-primary" />
-                    Enabled
-                  </label>
-                  <Textarea name="alt_text" defaultValue={item.alt_text ?? ""} placeholder="Alt text" className="lg:col-span-4" />
-                  <div className="flex gap-2 lg:col-span-2">
-                    <Button type="submit" size="sm" className="gap-1 flex-1">
-                      <Save className="size-3.5" />
-                      Save
-                    </Button>
-                    <form action={deleteGalleryItem}>
-                      <input type="hidden" name="id" value={item.id} />
-                      <Button type="submit" size="sm" variant="destructive" className="gap-1">
-                        <Trash2 className="size-3.5" />
-                      </Button>
-                    </form>
-                  </div>
-                </form>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        <GalleryManager items={data.gallery} />
       </DashboardSection>
 
       {/* Settings */}

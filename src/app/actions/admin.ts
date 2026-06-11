@@ -186,7 +186,6 @@ export async function deleteGalleryItem(formData: FormData) {
   // Fetch the image path so we can delete from storage too
   const { data: item } = await supabase.from("gallery").select("image_path").eq("id", id).maybeSingle();
   if (item?.image_path) {
-    // Extract the storage key from the public URL (everything after /object/public/)
     const match = item.image_path.match(/\/object\/public\/(.+)$/);
     const storagePath = match ? match[1] : null;
     if (storagePath) {
@@ -201,6 +200,40 @@ export async function deleteGalleryItem(formData: FormData) {
   revalidatePath("/gallery");
   revalidatePath("/admin");
   redirectWithNotice("Gallery image deleted.");
+}
+
+export async function bulkDeleteGalleryItems(formData: FormData) {
+  const { supabase } = await requireAdmin();
+  const raw = String(formData.get("ids") || "");
+  const ids = raw.split(",").map((s) => s.trim()).filter(Boolean);
+  if (ids.length === 0) redirectWithNotice("No images selected.");
+
+  // Fetch storage paths for all selected items
+  const { data: items } = await supabase.from("gallery").select("id, image_path").in("id", ids);
+  if (items && items.length > 0) {
+    const filesToRemove: Record<string, string[]> = {};
+    for (const item of items) {
+      if (!item.image_path) continue;
+      const match = item.image_path.match(/\/object\/public\/(.+)$/);
+      const storagePath = match ? match[1] : null;
+      if (storagePath) {
+        const bucket = storagePath.split("/")[0];
+        const filePath = storagePath.slice(bucket.length + 1);
+        if (!filesToRemove[bucket]) filesToRemove[bucket] = [];
+        filesToRemove[bucket].push(filePath);
+      }
+    }
+    // Delete from storage buckets
+    for (const [bucket, paths] of Object.entries(filesToRemove)) {
+      await supabase.storage.from(bucket).remove(paths);
+    }
+  }
+
+  const { error } = await supabase.from("gallery").delete().in("id", ids);
+  if (error) throw new Error(error.message);
+  revalidatePath("/gallery");
+  revalidatePath("/admin");
+  redirectWithNotice(`${ids.length} image${ids.length === 1 ? "" : "s"} deleted.`);
 }
 
 export async function updateAppointmentStatus(formData: FormData) {
