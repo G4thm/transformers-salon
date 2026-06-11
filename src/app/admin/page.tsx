@@ -2,8 +2,11 @@ import type { LucideIcon } from "lucide-react";
 import { CalendarCheck, Gift, Images, Layers3, Save, Trash2 } from "lucide-react";
 import { signOut } from "@/app/actions/auth";
 import {
+  deleteGalleryItem,
   deleteOffer,
   deleteService,
+  deleteAppointment,
+  purgeOldAppointments,
   updateAppointmentStatus,
   updateBrandAsset,
   updateSetting,
@@ -122,6 +125,13 @@ export default async function AdminPage() {
 
       {/* Appointments */}
       <DashboardSection title="Appointments" description="Confirm, complete, or cancel requests from the booking form.">
+        {/* Bulk purge */}
+        <form action={purgeOldAppointments} className="self-start">
+          <Button type="submit" size="sm" variant="outline" className="gap-1 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20">
+            <Trash2 className="size-3.5" />
+            Clear old appointments (48h+)
+          </Button>
+        </form>
         <div className="overflow-x-auto rounded-xl border">
           <table className="w-full min-w-190 text-sm">
             <thead className="border-b bg-muted/50 text-left text-muted-foreground">
@@ -160,22 +170,32 @@ export default async function AdminPage() {
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <form action={updateAppointmentStatus} className="flex gap-2">
-                      <input type="hidden" name="id" value={appointment.id} />
-                      <select
-                        name="status"
-                        defaultValue={appointment.status}
-                        className="h-9 rounded-md border bg-background px-2 text-sm"
-                      >
-                        <option value="pending">Pending</option>
-                        <option value="confirmed">Confirm</option>
-                        <option value="completed">Complete</option>
-                        <option value="cancelled">Cancel</option>
-                      </select>
-                      <Button size="sm" type="submit" variant="outline" className="gap-1">
-                        <Save className="size-3.5" />
-                      </Button>
-                    </form>
+                    <div className="flex items-center gap-2">
+                      <form action={updateAppointmentStatus} className="flex gap-2">
+                        <input type="hidden" name="id" value={appointment.id} />
+                        <select
+                          name="status"
+                          defaultValue={appointment.status}
+                          className="h-9 rounded-md border bg-background px-2 text-sm"
+                        >
+                          <option value="pending">Pending</option>
+                          <option value="confirmed">Confirm</option>
+                          <option value="completed">Complete</option>
+                          <option value="cancelled">Cancel</option>
+                        </select>
+                        <Button size="sm" type="submit" variant="outline" className="gap-1">
+                          <Save className="size-3.5" />
+                        </Button>
+                      </form>
+                      {(appointment.status === "cancelled" || appointment.status === "completed") && (
+                        <form action={deleteAppointment}>
+                          <input type="hidden" name="id" value={appointment.id} />
+                          <Button size="sm" type="submit" variant="destructive" className="gap-1" title="Delete this appointment">
+                            <Trash2 className="size-3.5" />
+                          </Button>
+                        </form>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -399,21 +419,29 @@ export default async function AdminPage() {
 
       {/* Gallery */}
       <DashboardSection title="Gallery" description="Upload images to Supabase Storage, then manage gallery records here.">
-        <AdminModal triggerLabel="Add gallery image" title="New gallery image" description="Upload an image and choose how it appears in the gallery grid.">
-          <form action={upsertGalleryItem} className="grid gap-4 lg:grid-cols-6" encType="multipart/form-data">
-            <Input name="title" placeholder="Image title" required />
-            <Input name="image_path" placeholder="Storage image path" required />
-            <div className="lg:col-span-2">
-              <ImageCropField label="Upload and crop gallery image" currentImageUrl={undefined} aspect={1} helperText="Crop the image to fit the gallery tile." required />
+        <AdminModal triggerLabel="Add gallery image" title="New gallery image" description="Select one or more images to upload. Title is auto-set from the filename.">
+          <form action={upsertGalleryItem} className="grid gap-4" encType="multipart/form-data">
+            <div className="grid gap-2">
+              <label className="text-sm font-semibold">Images (select multiple)</label>
+              <input
+                name="image_files[]"
+                type="file"
+                accept="image/*"
+                multiple
+                required
+                className="block w-full rounded-md border bg-background px-3 py-2 text-sm file:mr-3 file:rounded file:border-0 file:bg-primary/10 file:px-3 file:py-1 file:text-sm file:font-semibold file:text-primary hover:file:bg-primary/20"
+              />
+              <p className="text-xs text-muted-foreground">Hold Ctrl / Cmd to select multiple files. Titles are auto-generated from filenames.</p>
             </div>
-            <Input name="category" placeholder="Category" />
-            <Input name="display_order" type="number" defaultValue="0" />
-            <label className="flex items-center gap-2 text-sm font-semibold">
-              <input name="enabled" type="checkbox" defaultChecked />
-              Enabled
+            <label className="grid gap-1 text-sm font-semibold">
+              Category <span className="font-normal text-muted-foreground">(optional)</span>
+              <Input name="category" placeholder="e.g. men, women, bridal" />
             </label>
-            <Button type="submit">Add image</Button>
-            <Textarea name="alt_text" placeholder="Alt text" className="lg:col-span-6" />
+            <label className="flex items-center gap-2 text-sm font-semibold">
+              <input name="enabled" type="checkbox" defaultChecked className="size-4 accent-primary" />
+              Visible on website
+            </label>
+            <Button type="submit">Upload images</Button>
           </form>
         </AdminModal>
         <div className="grid gap-4">
@@ -422,39 +450,34 @@ export default async function AdminPage() {
               <CardContent className="flex flex-col gap-4 p-4">
                 <form action={upsertGalleryItem} className="grid gap-4 lg:grid-cols-6" encType="multipart/form-data">
                   <input type="hidden" name="id" value={item.id} />
-                  <Input name="title" defaultValue={item.title} placeholder="Image title" required />
-                  <Input name="image_path" defaultValue={item.image_path} placeholder="Storage image path" required />
+                  <input type="hidden" name="image_path" value={item.image_path} />
+                  <Input name="title" defaultValue={item.title} placeholder="Image title" required className="lg:col-span-2" />
                   <div className="lg:col-span-2">
                     <ImageCropField
                       label="Replace gallery image"
                       currentImageUrl={item.image_path}
                       aspect={1}
-                      helperText="Pick a new image crop or keep the current image."
+                      helperText="Pick a new image or keep the current one."
                     />
                   </div>
                   <Input name="category" defaultValue={item.category ?? ""} placeholder="Category" />
-                  <Input name="display_order" type="number" defaultValue={String(item.display_order)} />
                   <label className="flex items-center gap-2 text-sm font-semibold">
-                    <input name="enabled" type="checkbox" defaultChecked={item.enabled} />
+                    <input name="enabled" type="checkbox" defaultChecked={item.enabled} className="size-4 accent-primary" />
                     Enabled
                   </label>
-                  <Button type="submit" size="sm" className="gap-1">
-                    <Save className="size-3.5" />
-                    Save image
-                  </Button>
-                  <Textarea name="alt_text" defaultValue={item.alt_text ?? ""} placeholder="Alt text" className="lg:col-span-6" />
-                </form>
-                <form action={upsertGalleryItem} className="self-start">
-                  <input type="hidden" name="id" value={item.id} />
-                  <input type="hidden" name="title" value={item.title} />
-                  <input type="hidden" name="image_path" value={item.image_path} />
-                  <input type="hidden" name="category" value={item.category ?? ""} />
-                  <input type="hidden" name="display_order" value={String(item.display_order)} />
-                  <input type="hidden" name="alt_text" value={item.alt_text ?? ""} />
-                  <input type="hidden" name="enabled" value={item.enabled ? "on" : ""} />
-                  <Button type="submit" size="sm" variant="outline">
-                    Re-save
-                  </Button>
+                  <Textarea name="alt_text" defaultValue={item.alt_text ?? ""} placeholder="Alt text" className="lg:col-span-4" />
+                  <div className="flex gap-2 lg:col-span-2">
+                    <Button type="submit" size="sm" className="gap-1 flex-1">
+                      <Save className="size-3.5" />
+                      Save
+                    </Button>
+                    <form action={deleteGalleryItem}>
+                      <input type="hidden" name="id" value={item.id} />
+                      <Button type="submit" size="sm" variant="destructive" className="gap-1">
+                        <Trash2 className="size-3.5" />
+                      </Button>
+                    </form>
+                  </div>
                 </form>
               </CardContent>
             </Card>

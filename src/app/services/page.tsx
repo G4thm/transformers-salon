@@ -8,6 +8,30 @@ import { Button } from "@/components/ui/button";
 import { getPublicContent } from "@/lib/public-content";
 import { getSupabaseImageUrl } from "@/lib/utils";
 
+/** Keyword → static image map (mirrors service-flip-cards.tsx) */
+const AUTO_IMAGE_MAP: Record<string, string> = {
+  haircut: "/services/haircuts.jpg",
+  beard: "/services/beard.jpg",
+  shave: "/services/beard.jpg",
+  color: "/services/coloring.jpg",
+  colour: "/services/coloring.jpg",
+  highlight: "/services/coloring.jpg",
+  spa: "/services/hair-spa.jpg",
+  treatment: "/services/hair-spa.jpg",
+  facial: "/services/facial.jpg",
+  face: "/services/facial.jpg",
+  skin: "/services/facial.jpg",
+  women: "/services/women-hair.jpg",
+  styling: "/services/women-hair.jpg",
+};
+function getAutoImage(name: string) {
+  const lower = name.toLowerCase();
+  for (const [kw, path] of Object.entries(AUTO_IMAGE_MAP)) {
+    if (lower.includes(kw)) return path;
+  }
+  return "/services/haircuts.jpg";
+}
+
 export const metadata = { title: "Services" };
 
 export default async function ServicesPage() {
@@ -54,8 +78,7 @@ export default async function ServicesPage() {
               {content.services
                 .filter((s) => s.category === "men" || s.categoryName?.toLowerCase() === "men")
                 .map((service) => {
-                  const imgSrc =
-                    getSupabaseImageUrl(service.imagePath) ?? "/brand/fox-mascot.webp";
+                  const imgSrc = getSupabaseImageUrl(service.imagePath) ?? getAutoImage(service.name);
                   return (
                     <article
                       key={service.id}
