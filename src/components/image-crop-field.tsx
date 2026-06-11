@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Cropper, { type Area, type Point } from "react-easy-crop";
 import { ImagePlus, RotateCcw, ZoomIn, ZoomOut, X } from "lucide-react";
-import Image from "next/image";
+
 import { Button } from "@/components/ui/button";
 
 type ImageCropFieldProps = {
@@ -159,9 +159,10 @@ export function ImageCropField({
         aria-label="Select image"
       >
         {preview ? (
-          // Image filled — needs a relative positioned wrapper for Next.js fill
+          // Use plain <img> so blob: URLs (local file picks) are supported
           <span className="absolute inset-0">
-            <Image src={preview} alt={label} fill unoptimized className="object-cover" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={preview} alt={label} className="h-full w-full object-cover" />
           </span>
         ) : (
           // Empty placeholder

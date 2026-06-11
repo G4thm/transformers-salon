@@ -103,7 +103,7 @@ export default async function AdminPage() {
             ["Services", data.services.length, Layers3, "bg-orange-500/15 text-orange-500"],
             ["Offers", data.offers.length, Gift, "bg-purple-500/15 text-purple-500"],
             ["Gallery", data.gallery.length, Images, "bg-sky-500/15 text-sky-500"],
-            ["Appointments", data.appointments.length, CalendarCheck, "bg-emerald-500/15 text-emerald-500"],
+            ["Appointments", data.appointments.filter((a) => a.status !== "cancelled").length, CalendarCheck, "bg-emerald-500/15 text-emerald-500"],
           ] as Array<[string, number, LucideIcon, string]>
         ).map(([label, count, Icon, iconClass]) => (
           <Card key={String(label)} className="rounded-xl shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:border-primary/30">
