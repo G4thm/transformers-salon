@@ -23,9 +23,9 @@ export const metadata: Metadata = {
     "Luxury unisex salon in Puducherry — precision haircuts, beard styling, hair coloring, facials & more. Book your appointment online.",
   metadataBase: new URL("https://transformerssalon.in"),
   icons: {
-    icon: "/brand/fox-mascot.webp",
-    apple: "/brand/fox-mascot.webp",
-    shortcut: "/brand/fox-mascot.webp",
+    icon: "/brand/logo-web.jpeg",
+    apple: "/brand/logo-web.jpeg",
+    shortcut: "/brand/logo-web.jpeg",
   },
 };
 
