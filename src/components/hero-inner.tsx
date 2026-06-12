@@ -16,7 +16,7 @@ const fadeUp = {
     transition: {
       delay: i * 0.11,
       duration: 0.55,
-      ease: [0.16, 1, 0.3, 1],
+      ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
     },
   }),
 };
@@ -27,7 +27,7 @@ const cardVariant = {
     opacity: 1,
     x: 0,
     scale: 1,
-    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.2 },
+    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] as [number, number, number, number], delay: 0.2 },
   },
 };
 
