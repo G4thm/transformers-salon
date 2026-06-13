@@ -33,7 +33,7 @@ export function MobileNav() {
       {/* Backdrop */}
       {open && (
         <div
-          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+          className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm"
           onClick={() => setOpen(false)}
           aria-hidden
         />
@@ -41,7 +41,7 @@ export function MobileNav() {
 
       {/* Slide-in drawer */}
       <aside
-        className={`fixed inset-y-0 right-0 z-50 flex w-72 flex-col bg-background shadow-2xl transition-transform duration-300 ease-in-out ${
+        className={`fixed inset-y-0 right-0 z-50 flex w-[min(19rem,100vw)] flex-col border-l border-border bg-card shadow-2xl transition-transform duration-300 ease-in-out ${
           open ? "translate-x-0" : "translate-x-full"
         }`}
         aria-label="Mobile navigation"
